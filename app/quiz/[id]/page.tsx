@@ -3,7 +3,7 @@
 import {
 	createAttempt,
 	deleteSession,
-	getFullSessionData,
+	getFullSessionData
 } from '@/lib/actions/session.actions'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -94,7 +94,7 @@ export default function QuizResultsPage() {
 			const newAttemptNumber = session.attempts.length + 1
 			await createAttempt({
 				sessionId: session.id,
-				attemptNumber: newAttemptNumber,
+				attemptNumber: newAttemptNumber
 			})
 			router.push(`/quiz/${sessionId}/questions`)
 		} catch (error) {
@@ -114,10 +114,10 @@ export default function QuizResultsPage() {
 
 	if (loading || !session) {
 		return (
-			<div className='flex items-center justify-center p-4'>
-				<div className='bg-white rounded-lg shadow p-8 w-full max-w-md text-center'>
-					<div className='animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto'></div>
-					<p className='mt-4 text-gray-500'>Загрузка...</p>
+			<div className="flex items-center justify-center p-4">
+				<div className="bg-white rounded-lg shadow p-8 w-full max-w-md text-center">
+					<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
+					<p className="mt-4 text-gray-500">Загрузка...</p>
 				</div>
 			</div>
 		)
@@ -132,27 +132,27 @@ export default function QuizResultsPage() {
 		session.attempts && session.attempts.some(a => a.answers.length > 0)
 
 	return (
-		<main className='container mx-auto px-4 py-8'>
-			<div className='rounded-lg bg-white px-14 py-7 items-center shadow flex justify-between mb-8 max-w-3xl mx-auto'>
-				<div className='text-start'>
-					<h1 className='text-3xl font-semibold mb-2'>{session.topic}</h1>
-					<p className='text-gray-500'>
+		<main className="container mx-auto px-4 py-8">
+			<div className="rounded-lg bg-white px-14 py-7 items-center shadow flex justify-between mb-8 max-w-3xl mx-auto">
+				<div className="text-start">
+					<h1 className="text-3xl font-semibold mb-2">{session.topic}</h1>
+					<p className="text-gray-500">
 						{session.attempts?.length || 0}{' '}
 						{(session.attempts?.length || 0) === 1 ? 'попытка' : 'попытки'}
 					</p>
 				</div>
 
 				<button
-					className='bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition'
+					className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
 					onClick={() => router.push(`/quiz/${sessionId}/tutor`)}
 				>
 					Работа над ошибками
 				</button>
 			</div>
 
-			<div className='max-w-3xl mx-auto'>
-				<div className='bg-white rounded-lg shadow p-4 mb-6'>
-					<div className='flex items-center gap-2 flex-wrap'>
+			<div className="max-w-3xl mx-auto">
+				<div className="bg-white rounded-lg shadow p-4 mb-6">
+					<div className="flex items-center gap-2 flex-wrap">
 						{hasAttempts &&
 							session.attempts.map(attempt => (
 								<button
@@ -169,7 +169,7 @@ export default function QuizResultsPage() {
 								</button>
 							))}
 						<button
-							className='bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition'
+							className="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition"
 							onClick={handleNewAttempt}
 						>
 							+ Новая попытка
@@ -181,11 +181,11 @@ export default function QuizResultsPage() {
 				{hasCompletedAttempts &&
 				currentAttemptData &&
 				currentAttemptData.answers.length > 0 ? (
-					<div className='bg-white rounded-lg shadow p-6'>
+					<div className="bg-white rounded-lg shadow p-6">
 						{getWeakTopics(currentAttemptData.answers).length > 0 && (
-							<div className='bg-red-50 p-5 rounded-lg mb-6'>
-								<h3 className='font-semibold mb-2'>Темы для повторения</h3>
-								<ul className='list-disc list-inside'>
+							<div className="bg-red-50 p-5 rounded-lg mb-6">
+								<h3 className="font-semibold mb-2">Темы для повторения</h3>
+								<ul className="list-disc list-inside">
 									{getWeakTopics(currentAttemptData.answers).map((topic, i) => (
 										<li key={i}>{topic}</li>
 									))}
@@ -193,11 +193,11 @@ export default function QuizResultsPage() {
 							</div>
 						)}
 
-						<details className='mt-4'>
-							<summary className='cursor-pointer text-blue-900 hover:text-blue-800 font-medium'>
+						<details className="mt-4">
+							<summary className="cursor-pointer text-blue-900 hover:text-blue-800 font-medium">
 								Подробные ответы ({currentAttemptData.answers.length})
 							</summary>
-							<div className='mt-4 space-y-2 max-h-96 overflow-y-auto'>
+							<div className="mt-4 space-y-2 max-h-96 overflow-y-auto">
 								{currentAttemptData.answers.map(
 									(a: AnswerRecord, i: number) => (
 										<div
@@ -208,11 +208,11 @@ export default function QuizResultsPage() {
 													: 'bg-red-50 border border-red-200'
 											}`}
 										>
-											<div className='font-medium text-sm'>
+											<div className="font-medium text-sm">
 												Вопрос {a.questionNumber}: {a.questionText}
 											</div>
-											<div className='text-sm mt-1'>
-												<span className='text-gray-500'>Ваш ответ: </span>
+											<div className="text-sm mt-1">
+												<span className="text-gray-500">Ваш ответ: </span>
 												<span
 													className={
 														a.isCorrect ? 'text-green-700' : 'text-red-700'
@@ -221,12 +221,12 @@ export default function QuizResultsPage() {
 													{a.userAnswer}
 												</span>
 												{!a.isCorrect && (
-													<span className='text-gray-500 ml-2'>
+													<span className="text-gray-500 ml-2">
 														/ Правильный: {a.correctAnswer}
 													</span>
 												)}
 											</div>
-											<div className='text-xs text-gray-400 mt-1'>
+											<div className="text-xs text-gray-400 mt-1">
 												Тема: {a.subtopic}
 											</div>
 										</div>
@@ -236,10 +236,10 @@ export default function QuizResultsPage() {
 						</details>
 					</div>
 				) : (
-					<div className='bg-white rounded-lg shadow p-12 text-center'>
-						<p className='text-gray-500 mb-4'>Попыток нет</p>
+					<div className="bg-white rounded-lg shadow p-12 text-center">
+						<p className="text-gray-500 mb-4">Попыток нет</p>
 						<button
-							className='bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition'
+							className="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition"
 							onClick={handleNewAttempt}
 						>
 							+ Новая попытка
@@ -248,10 +248,10 @@ export default function QuizResultsPage() {
 				)}
 
 				{/* Кнопка удаления сессии */}
-				<div className='mt-8 flex justify-center'>
+				<div className="mt-8 flex justify-center">
 					<button
 						onClick={handleDeleteClick}
-						className='bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition'
+						className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition"
 					>
 						🗑 Удалить сессию
 					</button>
@@ -260,26 +260,26 @@ export default function QuizResultsPage() {
 
 			{/* Диалог подтверждения удаления */}
 			{showConfirmDialog && (
-				<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-					<div className='bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4'>
-						<h3 className='text-xl font-semibold mb-4'>
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+					<div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+						<h3 className="text-xl font-semibold mb-4">
 							Подтверждение удаления
 						</h3>
-						<p className='text-gray-600 mb-6'>
+						<p className="text-gray-600 mb-6">
 							Вы уверены, что хотите удалить сессию "{session?.topic}"?
 							<br />
 							Все попытки и ответы будут потеряны безвозвратно.
 						</p>
-						<div className='flex justify-end gap-3'>
+						<div className="flex justify-end gap-3">
 							<button
 								onClick={handleCancelDelete}
-								className='px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition'
+								className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
 							>
 								Отмена
 							</button>
 							<button
 								onClick={handleConfirmDelete}
-								className='px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition'
+								className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
 							>
 								Удалить
 							</button>

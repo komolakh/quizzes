@@ -52,7 +52,7 @@ export const createSession = async (formData: CreateSession) => {
 			user_id: userId,
 			topic: formData.topic,
 			current_attempt: 0,
-			completed: false,
+			completed: false
 		})
 		.select()
 
@@ -162,7 +162,7 @@ export const createAttempt = async (formData: CreateAttemptData) => {
 		.from('attempts')
 		.insert({
 			session_id: formData.sessionId,
-			attempt_number: formData.attemptNumber,
+			attempt_number: formData.attemptNumber
 		})
 		.select()
 		.single()
@@ -268,7 +268,7 @@ export const createAnswer = async (formData: CreateAnswerData) => {
 			user_answer: formData.userAnswer,
 			correct_answer: formData.correctAnswer,
 			is_correct: formData.isCorrect,
-			subtopic: formData.subtopic,
+			subtopic: formData.subtopic
 		})
 		.select()
 		.single()
@@ -315,7 +315,7 @@ export const createAnswersBatch = async (answers: CreateAnswerData[]) => {
 				user_answer: a.userAnswer,
 				correct_answer: a.correctAnswer,
 				is_correct: a.isCorrect,
-				subtopic: a.subtopic,
+				subtopic: a.subtopic
 			}))
 		)
 		.select()
@@ -401,21 +401,21 @@ export const getFullSessionData = async (sessionId: string) => {
 				userAnswer: a.user_answer,
 				correctAnswer: a.correct_answer,
 				isCorrect: a.is_correct,
-				subtopic: a.subtopic,
+				subtopic: a.subtopic
 			}))
 
 			return {
 				id: attempt.id, // ✅ ОБЯЗАТЕЛЬНО добавить id
 				attemptNumber: attempt.attempt_number,
 				answers: formattedAnswers,
-				completedAt: attempt.completed_at,
+				completedAt: attempt.completed_at
 			}
 		})
 	)
 
 	return {
 		...session,
-		attempts: attemptsWithAnswers,
+		attempts: attemptsWithAnswers
 	}
 }
 
@@ -460,12 +460,12 @@ export const getSessionStats = async (sessionId: string) => {
 			completedAt: attempt.completed_at,
 			totalQuestions: total,
 			correctAnswers: correct,
-			percentage,
+			percentage
 		}
 	})
 
 	return {
 		session,
-		stats,
+		stats
 	}
 }

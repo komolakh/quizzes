@@ -4,7 +4,7 @@ import {
 	completeAttempt,
 	createAnswersBatch,
 	getFullSessionData,
-	updateSession,
+	updateSession
 } from '@/lib/actions/session.actions'
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -76,7 +76,7 @@ export default function QuizQuestionsPage() {
 				userAnswer: a.userAnswer,
 				correctAnswer: a.correctAnswer,
 				isCorrect: a.isCorrect,
-				subtopic: a.subtopic,
+				subtopic: a.subtopic
 			}))
 			await createAnswersBatch(answersData)
 		},
@@ -99,7 +99,7 @@ export default function QuizQuestionsPage() {
 		[sessionId, currentAttemptId, router, saveAnswersToDB]
 	)
 
-	// Загрузка пачки вопросов — с явной передачей темы
+	// Загрузка пачки вопросов — с учётом всех предыдущих попыток
 	const loadBatch = useCallback(
 		async (
 			batchNum: number,
@@ -112,6 +112,26 @@ export default function QuizQuestionsPage() {
 			try {
 				const askedTexts = currentAnswers.map(a => a.questionText)
 
+				// ✅ Собираем все ответы из ПРЕДЫДУЩИХ попыток (не текущей)
+				const previousAttemptsAnswers =
+					session?.attempts
+						?.filter(
+							a =>
+								a.completedAt !== null &&
+								a.attemptNumber !== session.current_attempt
+						)
+						?.flatMap(a => a.answers) || []
+
+				// ✅ Объединяем историю всех предыдущих попыток с ответами текущей
+				const allAnswers = [...previousAttemptsAnswers, ...currentAnswers]
+
+				// ✅ Собираем все вопросы из предыдущих попыток для предотвращения повторов
+				const allPreviousQuestions =
+					session?.attempts
+						?.filter(a => a.attemptNumber !== session.current_attempt)
+						?.flatMap(a => a.answers.map(ans => ans.questionText)) || []
+				const allAskedQuestions = [...allPreviousQuestions, ...askedTexts]
+
 				const res = await fetch('/api/generate-batch', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -119,9 +139,9 @@ export default function QuizQuestionsPage() {
 						topic: topicParam,
 						batchNumber: batchNum,
 						totalBatches: TOTAL_BATCHES,
-						askedQuestions: askedTexts,
-						answers: currentAnswers,
-					}),
+						askedQuestions: allAskedQuestions,
+						answers: allAnswers
+					})
 				})
 
 				if (!res.ok) {
@@ -146,7 +166,7 @@ export default function QuizQuestionsPage() {
 				setLoading(false)
 			}
 		},
-		[]
+		[session?.attempts, session?.current_attempt]
 	)
 
 	// Обработка ответа и переход к следующему вопросу
@@ -188,7 +208,7 @@ export default function QuizQuestionsPage() {
 			batchNumber,
 			session?.topic,
 			loadBatch,
-			finishTest,
+			finishTest
 		]
 	)
 
@@ -209,7 +229,7 @@ export default function QuizQuestionsPage() {
 			userAnswer: userAnswerLetter,
 			correctAnswer: correctAnswerLetter,
 			isCorrect,
-			subtopic: currentQuestion.subtopic,
+			subtopic: currentQuestion.subtopic
 		}
 
 		const newAnswers = [...answers, newAnswer]
@@ -284,10 +304,10 @@ export default function QuizQuestionsPage() {
 
 	if (!session || !currentAttemptId) {
 		return (
-			<div className='min-h-screen flex items-center justify-center'>
-				<div className='bg-white rounded-lg shadow p-12'>
-					<div className='animate-spin rounded-full h-10 w-10 border-b-2 border-blue-800 mx-auto'></div>
-					<p className='mt-4 text-gray-500'>Загрузка...</p>
+			<div className="min-h-screen flex items-center justify-center">
+				<div className="bg-white rounded-lg shadow p-12">
+					<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-800 mx-auto"></div>
+					<p className="mt-4 text-gray-500">Загрузка...</p>
 				</div>
 			</div>
 		)
@@ -296,31 +316,31 @@ export default function QuizQuestionsPage() {
 	const progressPercent = (answers.length / TOTAL_QUESTIONS) * 100
 
 	return (
-		<div className='min-h-[calc(100vh-56px)] px-4 py-8'>
-			<div className='max-w-3xl mx-auto'>
-				<div className='mb-6'>
-					<div className='flex justify-between text-sm text-gray-600 mb-2'>
+		<div className="min-h-[calc(100vh-56px)] px-4 py-8">
+			<div className="max-w-3xl mx-auto">
+				<div className="mb-6">
+					<div className="flex justify-between text-sm text-gray-600 mb-2">
 						<span>
 							Попытка {session.current_attempt} • Вопрос {questionNumber} из{' '}
 							{TOTAL_QUESTIONS}
 						</span>
 					</div>
-					<div className='w-full bg-gray-200 rounded-full h-2.5 overflow-hidden'>
+					<div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
 						<div
-							className='bg-blue-600 h-2.5 rounded-full transition-all duration-300'
+							className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
 							style={{ width: `${progressPercent}%` }}
 						/>
 					</div>
 				</div>
 
 				{error && (
-					<div className='mb-4 p-3 bg-red-100 text-red-700 rounded-xl'>
+					<div className="mb-4 p-3 bg-red-100 text-red-700 rounded-xl">
 						⚠️ {error}
 						<button
 							onClick={() =>
 								loadBatch(batchNumber, answers, session?.topic || '')
 							}
-							className='ml-4 underline font-medium'
+							className="ml-4 underline font-medium"
 						>
 							Повторить
 						</button>
@@ -328,24 +348,24 @@ export default function QuizQuestionsPage() {
 				)}
 
 				{currentQuestion ? (
-					<div className='bg-white rounded-2xl shadow p-6'>
-						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm px-3 py-1 bg-blue-50 text-blue-800 rounded-full'>
+					<div className="bg-white rounded-2xl shadow p-6">
+						<div className="flex items-center gap-2 mb-4">
+							<span className="text-sm px-3 py-1 bg-blue-50 text-blue-800 rounded-full">
 								📚 {currentQuestion.subtopic}
 							</span>
 						</div>
 
-						<h2 className='text-xl font-semibold mb-6 leading-relaxed'>
+						<h2 className="text-xl font-semibold mb-6 leading-relaxed">
 							{currentQuestion.text}
 						</h2>
 
-						<div className='space-y-3'>
+						<div className="space-y-3">
 							{currentQuestion.options.map((opt, idx) => (
 								<button
 									key={idx}
 									onClick={() => handleAnswer(opt)}
 									disabled={loading || isWaitingForNext}
-									className='w-full text-left p-4 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+									className="w-full text-left p-4 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									{opt}
 								</button>
@@ -353,16 +373,16 @@ export default function QuizQuestionsPage() {
 						</div>
 
 						{loading && (
-							<div className='mt-4 text-center text-gray-400'>
-								<div className='animate-spin rounded-full h-5 w-5 border-b-2 border-blue-800 inline-block mr-2'></div>
+							<div className="mt-4 text-center text-gray-400">
+								<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-800 inline-block mr-2"></div>
 								Загрузка...
 							</div>
 						)}
 					</div>
 				) : (
-					<div className='bg-white rounded-lg shadow p-12 text-center'>
-						<div className='animate-spin rounded-full h-10 w-10 border-b-2 border-blue-800 mx-auto'></div>
-						<p className='mt-4 text-gray-600'>Загрузка первого вопроса...</p>
+					<div className="bg-white rounded-lg shadow p-12 text-center">
+						<div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-800 mx-auto"></div>
+						<p className="mt-4 text-gray-600">Загрузка первого вопроса...</p>
 					</div>
 				)}
 
