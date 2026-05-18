@@ -4,20 +4,6 @@ import { createSupabaseClient } from '@/lib/supabase'
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 
-// Типы данных
-interface CreateSession {
-	topic: string
-}
-
-interface AnswerRecord {
-	questionNumber: number
-	questionText: string
-	userAnswer: string
-	correctAnswer: string
-	isCorrect: boolean
-	subtopic: string
-}
-
 interface UpdateSessionData {
 	current_attempt?: number
 	completed?: boolean
@@ -37,8 +23,6 @@ interface CreateAnswerData {
 	isCorrect: boolean
 	subtopic: string
 }
-
-// ==================== SESSIONS ====================
 
 export const createSession = async (formData: CreateSession) => {
 	const { userId } = await auth()
@@ -64,7 +48,7 @@ export const createSession = async (formData: CreateSession) => {
 
 export const getAllSessions = async () => {
 	const { userId } = await auth()
-	// if (!userId) throw new Error('Unauthorized')
+	if (!userId) throw new Error('Unauthorized')
 
 	const supabase = createSupabaseClient()
 
@@ -74,7 +58,7 @@ export const getAllSessions = async () => {
 		.eq('user_id', userId)
 		.order('created_at', { ascending: false })
 
-	// if (error) throw new Error(error.message)
+	if (error) throw new Error(error.message)
 
 	return data
 }

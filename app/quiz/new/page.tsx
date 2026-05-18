@@ -6,5 +6,5 @@ export default async function NewQuizPage() {
 	const { userId } = await auth()
 	if (!userId) redirect('/sign-in')
 
-	return <QuizForm userId={userId} />
+	return <QuizForm />
 }
