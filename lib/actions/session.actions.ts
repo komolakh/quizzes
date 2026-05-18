@@ -112,7 +112,6 @@ export const deleteSession = async (sessionId: string, path: string = '/') => {
 
 	const supabase = createSupabaseClient()
 
-	// Сначала удаляем все попытки и ответы (каскадное удаление через ON DELETE CASCADE)
 	const { error } = await supabase
 		.from('sessions')
 		.delete()
@@ -124,13 +123,10 @@ export const deleteSession = async (sessionId: string, path: string = '/') => {
 	revalidatePath(path)
 }
 
-// ==================== ATTEMPTS ====================
-
 export const createAttempt = async (formData: CreateAttemptData) => {
 	const { userId } = await auth()
 	if (!userId) throw new Error('Unauthorized')
 
-	// Проверяем, что сессия принадлежит пользователю
 	const supabase = createSupabaseClient()
 
 	const { data: session, error: sessionError } = await supabase

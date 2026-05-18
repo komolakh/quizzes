@@ -13,6 +13,7 @@ interface AnswerRecord {
 }
 
 interface Attempt {
+	id?: string
 	attemptNumber: number
 	answers: AnswerRecord[]
 	completedAt?: string
@@ -21,15 +22,21 @@ interface Attempt {
 interface SessionData {
 	id: string
 	topic: string
-	attempts?: Attempt[]
+	attempts: Attempt[]
 	current_attempt: number
 	completed: boolean
-	created_at: string
-	user_id: string
+	created_at?: string
+	user_id?: string
 }
 
 interface SessionLibraryProps {
 	sessions: SessionData[]
+}
+
+// quiz results
+interface QuizResultsProps {
+	session: SessionData
+	sessionId: string
 }
 
 // tutor
