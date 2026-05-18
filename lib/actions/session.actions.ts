@@ -4,6 +4,8 @@ import { createSupabaseClient } from '@/lib/supabase'
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 
+// TODO: types, error languages, unused
+
 interface UpdateSessionData {
 	current_attempt?: number
 	completed?: boolean

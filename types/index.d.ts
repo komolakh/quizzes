@@ -33,10 +33,24 @@ interface SessionLibraryProps {
 	sessions: SessionData[]
 }
 
-// quiz results
+// results
 interface QuizResultsProps {
 	session: SessionData
 	sessionId: string
+}
+
+// questions
+interface Question {
+	text: string
+	options: string[]
+	correctAnswer: string
+	subtopic: string
+}
+
+interface QuizQuestionsProps {
+	session: SessionData
+	sessionId: string
+	activeAttemptId: string
 }
 
 // tutor
