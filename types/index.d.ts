@@ -58,3 +58,24 @@ interface SavedMessage {
 	role: 'user' | 'system' | 'assistant'
 	content: string
 }
+
+// server actions
+interface UpdateSessionData {
+	current_attempt?: number
+	completed?: boolean
+}
+
+interface CreateAttemptData {
+	sessionId: string
+	attemptNumber: number
+}
+
+interface CreateAnswerData {
+	attemptId: string
+	questionNumber: number
+	questionText: string
+	userAnswer: string
+	correctAnswer: string
+	isCorrect: boolean
+	subtopic: string
+}

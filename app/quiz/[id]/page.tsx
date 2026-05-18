@@ -1,5 +1,8 @@
 import QuizResults from '@/components/QuizResults'
-import { getFullSessionData } from '@/lib/actions/session.actions'
+import {
+	deleteUnfinishedAttempts,
+	getFullSessionData
+} from '@/lib/actions/session.actions'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
@@ -12,6 +15,8 @@ export default async function QuizResultsPage({
 	if (!userId) redirect('/sign-in')
 
 	const { id } = await params
+	await deleteUnfinishedAttempts(id)
+
 	const sessionData = await getFullSessionData(id)
 
 	if (!sessionData) {

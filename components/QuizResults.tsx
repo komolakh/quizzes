@@ -8,7 +8,7 @@ export default function QuizResults({ session, sessionId }: QuizResultsProps) {
 	const router = useRouter()
 
 	const [selectedAttempt, setSelectedAttempt] = useState<number | null>(
-		session.current_attempt || session.attempts[0].attemptNumber || null
+		session.current_attempt || session.attempts[0]?.attemptNumber || null
 	)
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
@@ -169,7 +169,7 @@ export default function QuizResults({ session, sessionId }: QuizResultsProps) {
 						onClick={handleDeleteClick}
 						className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition"
 					>
-						Удалить сессию
+						Удалить
 					</button>
 				</div>
 			</div>
