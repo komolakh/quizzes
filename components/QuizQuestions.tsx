@@ -47,6 +47,8 @@ export default function QuizQuestions({
 
 	const finishTest = useCallback(
 		async (allAnswers: AnswerRecord[]) => {
+			console.log('activeAttemptId:', activeAttemptId)
+
 			await saveAnswersToDB(activeAttemptId, allAnswers)
 			await completeAttempt(activeAttemptId)
 			await updateSession(sessionId, { completed: true })
@@ -67,7 +69,6 @@ export default function QuizQuestions({
 			try {
 				const askedTexts = currentAnswers.map(a => a.questionText)
 
-				// ✅ Собираем все ответы из ПРЕДЫДУЩИХ попыток (не текущей)
 				const previousAttemptsAnswers =
 					session?.attempts
 						?.filter(
@@ -77,10 +78,8 @@ export default function QuizQuestions({
 						)
 						?.flatMap(a => a.answers) || []
 
-				// ✅ Объединяем историю всех предыдущих попыток с ответами текущей
 				const allAnswers = [...previousAttemptsAnswers, ...currentAnswers]
 
-				// ✅ Собираем все вопросы из предыдущих попыток для предотвращения повторов
 				const allPreviousQuestions =
 					session?.attempts
 						?.filter(a => a.attemptNumber !== session.current_attempt)
@@ -124,7 +123,6 @@ export default function QuizQuestions({
 		[session?.attempts, session?.current_attempt]
 	)
 
-	// Обработка ответа и переход к следующему вопросу
 	const handleAnswerAndContinue = useCallback(
 		async (newAnswers: AnswerRecord[]) => {
 			const nextIndex = currentIndexInBatch + 1
@@ -201,6 +199,12 @@ export default function QuizQuestions({
 			handleAnswerAndContinue(newAnswers)
 		}, 1500)
 	}
+
+	useEffect(() => {
+		if (currentQuestion === null && answers.length === 0 && !loading) {
+			loadBatch(1, [], session.topic)
+		}
+	}, [currentQuestion, answers.length, loading, loadBatch, session.topic])
 
 	useEffect(() => {
 		return () => {
