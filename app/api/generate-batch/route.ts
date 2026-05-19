@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
-// Анализ слабых тем на основе истории ответов
 function analyzeWeakTopics(answers: any[]): string[] {
 	if (!answers || answers.length === 0) return []
 
@@ -22,7 +21,6 @@ function analyzeWeakTopics(answers: any[]): string[] {
 		.map(([topic]) => topic)
 }
 
-// Получение контекста ошибок
 function getErrorContext(answers: any[]): string {
 	if (!answers || answers.length === 0) return ''
 
@@ -58,7 +56,6 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: 'Тема обязательна' }, { status: 400 })
 		}
 
-		// Проверка наличия API ключа
 		if (!process.env.GEMINI_API_KEY) {
 			console.log('Нет API ключа')
 			return NextResponse.json(
@@ -67,11 +64,9 @@ export async function POST(req: Request) {
 			)
 		}
 
-		// Анализируем слабые темы
 		const weakTopics = analyzeWeakTopics(answers)
 		const errorContext = getErrorContext(answers)
 
-		// Определяем сложность на основе успешности
 		let difficultyInstruction = ''
 		if (answers.length > 0) {
 			const correctCount = answers.filter(a => a.isCorrect).length
@@ -89,13 +84,11 @@ export async function POST(req: Request) {
 			}
 		}
 
-		// Список уже заданных вопросов
 		const askedText = askedQuestions
 			.slice(-10)
 			.map((q: string, i: number) => `${i + 1}. ${q.substring(0, 100)}`)
 			.join('\n')
 
-		// Формируем контекст о слабых темах
 		let weakTopicsContext = ''
 		if (weakTopics.length > 0) {
 			weakTopicsContext = `
@@ -136,14 +129,12 @@ ${askedQuestions.length > 0 ? `НЕ ПОВТОРЯЙ эти вопросы:\n${a
 		const result = await model.generateContent(prompt)
 		const responseText = result.response.text()
 
-		// Очистка от markdown
 		let cleanedText = responseText.replace(/```json\n?/gi, '')
 		cleanedText = cleanedText.replace(/```\n?/g, '')
 		cleanedText = cleanedText.trim()
 
 		const data = JSON.parse(cleanedText)
 
-		// Проверяем, что пришло 5 вопросов
 		if (!data.questions || data.questions.length !== 5) {
 			console.log('Gemini вернул не 5 вопросов')
 			return NextResponse.json(
