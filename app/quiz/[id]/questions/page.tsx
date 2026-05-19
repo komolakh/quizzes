@@ -18,17 +18,13 @@ export default async function QuizQuestionsPage({
 		redirect('/quiz/new')
 	}
 
-	const activeAttemptId = sessionData.current_attempt
-
-	if (!activeAttemptId) {
-		redirect(`/quiz/${id}`)
-	}
+	const activeAttempt = sessionData.attempts?.find(a => !a.completedAt)
 
 	return (
 		<QuizQuestions
 			session={sessionData}
 			sessionId={id}
-			activeAttemptId={activeAttemptId}
+			activeAttemptId={activeAttempt.id}
 		/>
 	)
 }

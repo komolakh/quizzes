@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
+// Анализ слабых тем на основе истории ответов
 function analyzeWeakTopics(answers: any[]): string[] {
 	if (!answers || answers.length === 0) return []
 
@@ -21,6 +22,7 @@ function analyzeWeakTopics(answers: any[]): string[] {
 		.map(([topic]) => topic)
 }
 
+// Получение контекста ошибок
 function getErrorContext(answers: any[]): string {
 	if (!answers || answers.length === 0) return ''
 
@@ -37,7 +39,77 @@ function getErrorContext(answers: any[]): string {
 
 	if (errors.length === 0) return ''
 
-	return `\n ОШИБКИ УЧЕНИКА:\n${errors.join('\n')}\n`
+	return `\n📌 ОШИБКИ УЧЕНИКА:\n${errors.join('\n')}\n`
+}
+
+// Функция для создания вопросов-заглушек
+function getFallbackQuestions(batchNumber: number, topic: string): any[] {
+	const fallbackQuestions = []
+
+	const fallbackPool = [
+		{
+			text: `Что является основным понятием в теме "${topic}"?`,
+			options: [
+				'A. Основное понятие 1',
+				'B. Основное понятие 2',
+				'C. Основное понятие 3',
+				'D. Основное понятие 4'
+			],
+			correctAnswer: 'A',
+			subtopic: topic
+		},
+		{
+			text: `Какое утверждение наиболее точно описывает "${topic}"?`,
+			options: [
+				'A. Первое утверждение',
+				'B. Второе утверждение',
+				'C. Третье утверждение',
+				'D. Четвертое утверждение'
+			],
+			correctAnswer: 'A',
+			subtopic: topic
+		},
+		{
+			text: `Что из перечисленного относится к "${topic}"?`,
+			options: ['A. Элемент 1', 'B. Элемент 2', 'C. Элемент 3', 'D. Элемент 4'],
+			correctAnswer: 'A',
+			subtopic: topic
+		},
+		{
+			text: `Как правильно определить "${topic}"?`,
+			options: [
+				'A. Определение 1',
+				'B. Определение 2',
+				'C. Определение 3',
+				'D. Определение 4'
+			],
+			correctAnswer: 'A',
+			subtopic: topic
+		},
+		{
+			text: `Какое ключевое свойство характерно для "${topic}"?`,
+			options: [
+				'A. Свойство 1',
+				'B. Свойство 2',
+				'C. Свойство 3',
+				'D. Свойство 4'
+			],
+			correctAnswer: 'A',
+			subtopic: topic
+		}
+	]
+
+	for (let i = 0; i < 5; i++) {
+		const q = fallbackPool[i % fallbackPool.length]
+		fallbackQuestions.push({
+			text: q.text,
+			options: q.options,
+			correctAnswer: q.correctAnswer,
+			subtopic: q.subtopic
+		})
+	}
+
+	return fallbackQuestions
 }
 
 export async function POST(req: Request) {
@@ -56,17 +128,18 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: 'Тема обязательна' }, { status: 400 })
 		}
 
+		// Проверка наличия API ключа
 		if (!process.env.GEMINI_API_KEY) {
-			console.log('Нет API ключа')
-			return NextResponse.json(
-				{ error: 'API ключ не настроен' },
-				{ status: 500 }
-			)
+			console.log('⚠️ Нет API ключа, отправляем заглушки')
+			const fallbackQuestions = getFallbackQuestions(batchNumber, topic)
+			return NextResponse.json({ questions: fallbackQuestions })
 		}
 
+		// Анализируем слабые темы
 		const weakTopics = analyzeWeakTopics(answers)
 		const errorContext = getErrorContext(answers)
 
+		// Определяем сложность на основе успешности
 		let difficultyInstruction = ''
 		if (answers.length > 0) {
 			const correctCount = answers.filter(a => a.isCorrect).length
@@ -84,15 +157,17 @@ export async function POST(req: Request) {
 			}
 		}
 
+		// Список уже заданных вопросов
 		const askedText = askedQuestions
 			.slice(-10)
 			.map((q: string, i: number) => `${i + 1}. ${q.substring(0, 100)}`)
 			.join('\n')
 
+		// Формируем контекст о слабых темах
 		let weakTopicsContext = ''
 		if (weakTopics.length > 0) {
 			weakTopicsContext = `
-ТЕМЫ, В КОТОРЫХ БЫЛИ ОШИБКИ:
+⚠️ ТЕМЫ, В КОТОРЫХ БЫЛИ ОШИБКИ:
 ${weakTopics.map(t => `- ${t}`).join('\n')}
 
 Ученик ошибался в этих темах. Проверь эти темы снова, но используй ДРУГИЕ вопросы, не повторяй предыдущие.
@@ -107,7 +182,7 @@ ${difficultyInstruction}
 ${weakTopicsContext}
 ${errorContext}
 
-${askedQuestions.length > 0 ? `НЕ ПОВТОРЯЙ эти вопросы:\n${askedText}` : ''}
+${askedQuestions.length > 0 ? `⚠️ НЕ ПОВТОРЯЙ эти вопросы:\n${askedText}` : ''}
 
 Создай ПАЧКУ ИЗ 5 ВОПРОСОВ. Каждый вопрос должен иметь 4 варианта ответа (A, B, C, D) и только один правильный.
 
@@ -125,30 +200,45 @@ ${askedQuestions.length > 0 ? `НЕ ПОВТОРЯЙ эти вопросы:\n${a
   ]
 }`
 
+		console.log(
+			`🤖 Генерируем пачку ${batchNumber} из ${totalBatches} по теме "${topic}"`
+		)
+		if (weakTopics.length > 0) {
+			console.log(`⚠️ Проблемные темы: ${weakTopics.join(', ')}`)
+		}
+		if (answers.length > 0) {
+			const correctCount = answers.filter(a => a.isCorrect).length
+			console.log(
+				`📊 Успешность: ${correctCount}/${answers.length} (${Math.round(
+					(correctCount / answers.length) * 100
+				)}%)`
+			)
+		}
+
 		const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 		const result = await model.generateContent(prompt)
 		const responseText = result.response.text()
 
+		// Очистка от markdown
 		let cleanedText = responseText.replace(/```json\n?/gi, '')
 		cleanedText = cleanedText.replace(/```\n?/g, '')
 		cleanedText = cleanedText.trim()
 
 		const data = JSON.parse(cleanedText)
 
+		// Проверяем, что пришло 5 вопросов
 		if (!data.questions || data.questions.length !== 5) {
-			console.log('Gemini вернул не 5 вопросов')
-			return NextResponse.json(
-				{ error: 'Неверный формат ответа от API' },
-				{ status: 500 }
-			)
+			console.log('⚠️ Gemini вернул не 5 вопросов, отправляем заглушки')
+			const fallbackQuestions = getFallbackQuestions(batchNumber, topic)
+			return NextResponse.json({ questions: fallbackQuestions })
 		}
 
 		return NextResponse.json({ questions: data.questions })
 	} catch (error: any) {
-		console.error('Ошибка генерации пачки:', error)
-		return NextResponse.json(
-			{ error: error.message || 'Ошибка генерации вопросов' },
-			{ status: 500 }
-		)
+		console.error('❌ Ошибка генерации пачки:', error)
+
+		// При любой ошибке отправляем 5 вопросов-заглушек
+		const fallbackQuestions = getFallbackQuestions(batchNumber, topic)
+		return NextResponse.json({ questions: fallbackQuestions })
 	}
 }
