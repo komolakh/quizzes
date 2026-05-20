@@ -10,20 +10,16 @@ export const configureAssistant = () => {
 	const vapiAssistant: CreateAssistantDTO = {
 		name: 'Tutor',
 		firstMessage:
-			'Здравствуйте! Я ваш AI-репетитор. Я проанализировал результаты ваших тестов и готов помочь вам разобраться с материалом. Давайте начнём с тем, где у вас возникли сложности. Вы готовы?',
+			'Здравствуйте! Я ваш AI-репетитор. Я проанализировала результаты ваших тестов и готова помочь вам разобраться с материалом. Давайте начнём с тем, где у вас возникли сложности. Вы готовы?',
 		transcriber: {
 			provider: 'deepgram',
 			model: 'nova-3',
-			language: 'ru', // ✅ русский язык
+			language: 'ru'
 		},
 		voice: {
-			provider: '11labs',
-			voiceId: 'sarah',
-			stability: 0.4,
-			similarityBoost: 0.8,
-			speed: 1,
-			style: 0.5,
-			useSpeakerBoost: true,
+			provider: 'azure',
+			voiceId: 'ru-RU-DariyaNeural',
+			speed: 1
 		},
 		model: {
 			provider: 'openai',
@@ -129,12 +125,12 @@ export const configureAssistant = () => {
 - Отслеживай, какой уровень подсказки ты дал
 - Будь ободряющим и терпеливым
 
-Начни сессию, поприветствовав студента по имени ({{user_name}}). Говори ТОЛЬКО на РУССКОМ языке.`,
-				},
-			],
+Начни сессию, поприветствовав студента по имени ({{user_name}}). Говори ТОЛЬКО на РУССКОМ языке.`
+				}
+			]
 		},
 		clientMessages: [],
-		serverMessages: [],
+		serverMessages: []
 	}
 	return vapiAssistant
 }

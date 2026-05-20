@@ -215,7 +215,7 @@ export default function QuizQuestions({
 	const progressPercent = (answers.length / 10) * 100
 
 	return (
-		<div className="min-h-[calc(100vh-56px)] px-4 py-8">
+		<div className="min-h-[calc(100vh-66px)] px-4 py-8">
 			<div className="max-w-3xl mx-auto">
 				<div className="mb-6">
 					<div className="flex justify-between text-sm text-gray-600 mb-2">

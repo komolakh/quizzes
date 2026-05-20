@@ -12,7 +12,7 @@ enum CallStatus {
 	INACTIVE = 'INACTIVE',
 	CONNECTING = 'CONNECTING',
 	ACTIVE = 'ACTIVE',
-	FINISHED = 'FINISHED',
+	FINISHED = 'FINISHED'
 }
 
 interface AnswerRecord {
@@ -37,7 +37,7 @@ const TutorComponent = ({
 	topic,
 	userName,
 	userImage,
-	answers,
+	answers
 }: Props) => {
 	const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE)
 	const [isSpeaking, setIsSpeaking] = useState(false)
@@ -53,7 +53,7 @@ const TutorComponent = ({
 		user_answer: a.userAnswer,
 		correct_answer: a.correctAnswer,
 		is_correct: a.isCorrect,
-		subtopic: a.subtopic,
+		subtopic: a.subtopic
 	}))
 
 	// Создаём контекст для ИИ-тьютора
@@ -157,10 +157,10 @@ const TutorComponent = ({
 		const assistantOverrides = {
 			variableValues: {
 				topic: topic,
-				answers_context: answersContext,
+				answers_context: answersContext
 			},
 			clientMessages: ['transcript'],
-			serverMessages: [],
+			serverMessages: []
 		}
 
 		console.log('📤 Assistant Overrides:', assistantOverrides)
@@ -174,11 +174,11 @@ const TutorComponent = ({
 	}
 
 	return (
-		<section className='flex flex-col h-[calc(100vh-200px)]'>
-			<section className='flex gap-6 max-sm:flex-col'>
+		<section className="flex flex-col h-[calc(100vh-210px)]">
+			<section className="flex gap-6 max-sm:flex-col">
 				{/* Левая карточка с темой */}
-				<div className='bg-white rounded-2xl shadow-md w-2/3 max-sm:w-full flex flex-col gap-4 justify-center items-center p-6'>
-					<div className='size-[280px] flex items-center justify-center rounded-xl relative'>
+				<div className="bg-white rounded-2xl shadow-md w-2/3 max-sm:w-full flex flex-col gap-4 justify-center items-center p-6">
+					<div className="w-[280px] h-[140px] flex items-center justify-center rounded-xl relative">
 						<div
 							className={cn(
 								'absolute transition-opacity duration-500',
@@ -195,7 +195,7 @@ const TutorComponent = ({
 								alt={topic}
 								width={160}
 								height={160}
-								className='object-contain'
+								className="object-contain"
 							/>
 						</div>
 
@@ -209,12 +209,12 @@ const TutorComponent = ({
 								lottieRef={lottieRef}
 								animationData={soundwaves}
 								autoplay={false}
-								className='size-[280px]'
+								className="size-[280px]"
 							/>
 						</div>
 					</div>
-					<p className='font-semibold text-xl text-gray-800'>{topic}</p>
-					<div className='flex gap-2 mt-2'>
+					<p className="font-semibold text-xl text-gray-800">{topic}</p>
+					<div className="flex gap-2 mt-2">
 						<span
 							className={cn(
 								'px-3 py-1 rounded-full text-xs font-medium',
@@ -235,33 +235,19 @@ const TutorComponent = ({
 				</div>
 
 				{/* Правая панель с управлением */}
-				<div className='flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row'>
-					<div className='bg-white rounded-2xl shadow-md flex flex-col gap-3 items-center justify-center py-6 px-4 max-sm:hidden'>
-						<div className='w-24 h-24 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center'>
-							<Image
-								src={userImage}
-								alt={userName}
-								width={96}
-								height={96}
-								className='object-cover'
-							/>
-						</div>
-						<p className='font-semibold text-lg text-gray-800'>{userName}</p>
-						<p className='text-xs text-gray-400'>Студент</p>
-					</div>
-
+				<div className="flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row justify-center">
 					<button
-						className='bg-white rounded-xl shadow-md flex flex-col gap-2 items-center justify-center py-4 px-4 cursor-pointer w-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+						className="bg-white rounded-xl shadow-md flex flex-col gap-2 items-center justify-center py-4 px-4 cursor-pointer w-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 						onClick={toggleMicrophone}
 						disabled={callStatus !== CallStatus.ACTIVE}
 					>
 						<Image
 							src={isMuted ? '/icons/mic-off.svg' : '/icons/mic-on.svg'}
-							alt='mic'
+							alt="mic"
 							width={28}
 							height={28}
 						/>
-						<p className='text-sm text-gray-600 max-sm:hidden'>
+						<p className="text-sm text-gray-600 max-sm:hidden">
 							{isMuted ? 'Включить микрофон' : 'Выключить микрофон'}
 						</p>
 					</button>
@@ -290,23 +276,16 @@ const TutorComponent = ({
 			</section>
 
 			{/* Чат сообщений */}
-			<section className='relative flex flex-col gap-4 w-full mt-8 flex-grow overflow-hidden bg-white rounded-2xl shadow-md'>
-				<div className='flex items-center gap-2 px-6 py-3 border-b border-gray-100'>
-					<div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
-					<p className='text-sm font-medium text-gray-600'>Диалог с тьютором</p>
+			<section className="relative flex flex-col gap-4 w-full mt-8 flex-grow overflow-hidden bg-white rounded-2xl shadow-md">
+				<div className="flex items-center gap-2 px-6 py-3 border-b border-gray-100">
+					<div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+					<p className="text-sm font-medium text-gray-600">Диалог с тьютором</p>
 				</div>
 
-				<div className='overflow-y-auto flex flex-col gap-3 px-6 pb-6 h-full no-scrollbar'>
+				<div className="overflow-y-auto flex flex-col gap-3 px-6 pb-6 h-full no-scrollbar">
 					{messages.length === 0 ? (
-						<div className='flex flex-col items-center justify-center h-64 text-center'>
-							<Image
-								src='/images/chat-placeholder.png'
-								alt='chat'
-								width={80}
-								height={80}
-								className='opacity-50'
-							/>
-							<p className='text-gray-400 mt-4'>
+						<div className="flex flex-col items-center justify-center h-64 text-center">
+							<p className="text-gray-400 mt-4">
 								Нажмите "Начать сессию" чтобы начать общение с тьютором
 							</p>
 						</div>
@@ -314,33 +293,39 @@ const TutorComponent = ({
 						messages.map((message, index) => {
 							if (message.role === 'assistant') {
 								return (
-									<div key={index} className='flex gap-3 justify-start'>
-										<div className='w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0'>
+									<div
+										key={index}
+										className="flex gap-3 justify-start"
+									>
+										<div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
 											<Image
-												src='/images/ai-avatar.png'
-												alt='AI'
+												src="/images/ai-avatar.png"
+												alt="AI"
 												width={20}
 												height={20}
 											/>
 										</div>
-										<div className='bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2 max-w-[80%]'>
-											<p className='text-sm text-gray-800'>{message.content}</p>
+										<div className="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2 max-w-[80%]">
+											<p className="text-sm text-gray-800">{message.content}</p>
 										</div>
 									</div>
 								)
 							} else {
 								return (
-									<div key={index} className='flex gap-3 justify-end'>
-										<div className='bg-blue-900 rounded-2xl rounded-tr-none px-4 py-2 max-w-[80%]'>
-											<p className='text-sm text-white'>{message.content}</p>
+									<div
+										key={index}
+										className="flex gap-3 justify-end"
+									>
+										<div className="bg-blue-900 rounded-2xl rounded-tr-none px-4 py-2 max-w-[80%]">
+											<p className="text-sm text-white">{message.content}</p>
 										</div>
-										<div className='w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden'>
+										<div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
 											<Image
 												src={userImage}
 												alt={userName}
 												width={32}
 												height={32}
-												className='object-cover'
+												className="object-cover"
 											/>
 										</div>
 									</div>
@@ -350,7 +335,7 @@ const TutorComponent = ({
 					)}
 				</div>
 
-				<div className='pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/90 to-transparent z-10' />
+				<div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/90 to-transparent z-10" />
 			</section>
 		</section>
 	)
