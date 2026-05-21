@@ -59,6 +59,14 @@ interface SavedMessage {
 	content: string
 }
 
+interface TutorProps {
+	sessionId: string
+	topic: string
+	userName: string
+	userImage: string
+	answers: AnswerRecord[]
+}
+
 // server actions
 interface UpdateSessionData {
 	current_attempt?: number

@@ -22,19 +22,13 @@ const Tutor = async ({ params }: SessionPageProps) => {
 	console.log(answers)
 
 	return (
-		<main className='container mx-auto px-4 py-8'>
-			<article className='flex rounded-border justify-between p-6 max-md:flex-col'>
-				<p className='font-bold text-2xl'>{topic}</p>
-			</article>
-
-			<TutorComponent
-				{...session}
-				sessionId={id}
-				userName={user.firstName!}
-				userImage={user.imageUrl!}
-				answers={answers}
-			/>
-		</main>
+		<TutorComponent
+			{...session}
+			sessionId={id}
+			userName={user.firstName!}
+			userImage={user.imageUrl!}
+			answers={answers}
+		/>
 	)
 }
 
