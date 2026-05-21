@@ -19,12 +19,9 @@ const Tutor = async ({ params }: SessionPageProps) => {
 
 	const answers = attempts?.flatMap(attempt => attempt.answers) || []
 
-	console.log(answers)
-
 	return (
 		<TutorComponent
 			{...session}
-			sessionId={id}
 			userName={user.firstName!}
 			userImage={user.imageUrl!}
 			answers={answers}
