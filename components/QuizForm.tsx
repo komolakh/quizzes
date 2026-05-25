@@ -22,7 +22,7 @@ export default function QuizForm() {
 	}
 
 	return (
-		<div className="h-[calc(100vh-56px)] flex items-center justify-center">
+		<div className="h-[calc(100vh-66px)] flex items-center justify-center">
 			<div className="bg-white rounded-lg shadow p-12">
 				<div className="text-center mb-4">
 					<h1 className="text-3xl font-bold mb-2">Тест</h1>

@@ -47,8 +47,6 @@ export default function QuizQuestions({
 
 	const finishTest = useCallback(
 		async (allAnswers: AnswerRecord[]) => {
-			console.log('activeAttemptId:', activeAttemptId)
-
 			await saveAnswersToDB(activeAttemptId, allAnswers)
 			await completeAttempt(activeAttemptId)
 			await updateSession(sessionId, { completed: true })

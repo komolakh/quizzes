@@ -314,7 +314,7 @@ export const createAnswersBatch = async (answers: CreateAnswerData[]) => {
 		.eq('id', attemptId)
 		.single()
 
-	if (attemptError) throw new Error('attempt not found')
+	if (attemptError) throw new Error('Attempt not found')
 
 	const { data: session, error: sessionError } = await supabase
 		.from('sessions')
