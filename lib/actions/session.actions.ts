@@ -21,7 +21,7 @@ export const createSession = async (formData: CreateSession) => {
 		.select()
 
 	if (error || !data)
-		throw new Error(error?.message || 'failed to create session')
+		throw new Error(error?.message || 'Failed to create session')
 
 	return data[0]
 }
