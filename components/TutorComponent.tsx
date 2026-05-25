@@ -127,6 +127,7 @@ const TutorComponent = ({
 		const assistantOverrides = {
 			variableValues: {
 				topic: topic,
+				user_name: userName,
 				answers_context: answersContext
 			},
 			clientMessages: ['transcript'],
