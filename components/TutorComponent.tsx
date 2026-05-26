@@ -129,9 +129,7 @@ const TutorComponent = ({
 				topic: topic,
 				user_name: userName,
 				answers_context: answersContext
-			},
-			clientMessages: ['transcript'],
-			serverMessages: []
+			}
 		}
 
 		vapi.start(configureAssistant(), assistantOverrides)
