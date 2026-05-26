@@ -34,7 +34,7 @@ const TutorComponent = ({
 			return 'У пользователя нет завершённых попыток.'
 		}
 
-		const correctCount = answers.filter(a => a.isCorrect).length
+		const correctCount = answers.filter((a: any) => a.isCorrect).length
 		const percentage = Math.round((correctCount / answers.length) * 100)
 
 		const weakTopics: Record<string, number> = {}
@@ -52,7 +52,7 @@ const TutorComponent = ({
 				.join(', ')}. `
 		}
 
-		const mistakes = answers.filter(a => !a.isCorrect).slice(0, 5)
+		const mistakes = answers.filter((a: any) => !a.isCorrect).slice(0, 5)
 		if (mistakes.length > 0) {
 			context += ` Конкретные ошибки: `
 			mistakes.forEach((m, i) => {

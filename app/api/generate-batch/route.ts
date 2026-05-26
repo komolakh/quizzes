@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
 		let difficultyInstruction = ''
 		if (answers.length > 0) {
-			const correctCount = answers.filter(a => a.isCorrect).length
+			const correctCount = answers.filter((a: any) => a.isCorrect).length
 			const successRate = (correctCount / answers.length) * 100
 
 			if (successRate < 40) {
