@@ -134,8 +134,6 @@ const TutorComponent = ({
 			serverMessages: []
 		}
 
-		console.log('Assistant Overrides:', assistantOverrides)
-
 		vapi.start(configureAssistant(), assistantOverrides)
 	}
 

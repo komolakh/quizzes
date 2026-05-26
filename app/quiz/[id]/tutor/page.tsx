@@ -7,7 +7,7 @@ interface SessionPageProps {
 	params: Promise<{ id: string }>
 }
 
-const Tutor = async ({ params }: SessionPageProps) => {
+const TutorPage = async ({ params }: SessionPageProps) => {
 	const { id } = await params
 	const session = await getFullSessionData(id)
 	const user = await currentUser()
@@ -29,4 +29,4 @@ const Tutor = async ({ params }: SessionPageProps) => {
 	)
 }
 
-export default Tutor
+export default TutorPage
