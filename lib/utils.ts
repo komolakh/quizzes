@@ -128,9 +128,7 @@ export const configureAssistant = () => {
 Начни сессию, поприветствовав студента по имени ({{user_name}}). Говори ТОЛЬКО на РУССКОМ языке.`
 				}
 			]
-		},
-		clientMessages: [],
-		serverMessages: []
+		}
 	}
 	return vapiAssistant
 }
